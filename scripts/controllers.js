@@ -71,3 +71,10 @@ appDemo.controller('contactCtrl', function($scope) {
     $scope.message = 'Would you like to contact us?';
 
 });
+
+
+$scope.getBackgroundStyle = function(imagepath){
+    return {
+        'background-image':'url(' + imagepath + ')'
+    }
+}
