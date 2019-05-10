@@ -1,0 +1,14 @@
+pip install Flask
+pip install Flask-SQLAlchemy
+pip install Flask-oidc
+pip install python-slugify
+pip install render_template
+pip install session
+pip install redirect
+pip install url_for
+pip install escape
+pip install request
+pip install jsonify
+pip install python-mysqldb
+
+

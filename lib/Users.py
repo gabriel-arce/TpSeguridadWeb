@@ -73,10 +73,10 @@ def getUsers(db):
 	try:
 		userlist = []
 
-		cursor 	= db.query("SELECT user_name, user_email FROM tbl_users")
+		cursor 	= db.query("SELECT user_name, user_username, user_email FROM tbl_users")
 
 		for row in cursor.fetchall():
-			userlist.append({'name': row[0], 'email': row[1]})
+			userlist.append({'user_name': row[0], 'user_username': row[1], 'user_email': row[2]})
 
 		return userlist
 
@@ -88,8 +88,10 @@ def getUsers(db):
 def deleteUser(db, user):
 	error = None
 
+	print user 
+
 	try:
-		cursor 	= db.query("DELETE FROM tbl_users WHERE user_name = %s", [user])
+		cursor 	= db.query("DELETE FROM tbl_users WHERE user_username like %s", [user])
 		return None
 
 	except:

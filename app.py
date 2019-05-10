@@ -15,7 +15,16 @@ class DB:
 
 	def connect(self):
 		self.conn = MySQLdb.connect("localhost","testuser","inicio123","bucketlist")
+#		config = {}
+#		execfile("config.conf",config)
 		
+#		self.conn = MySQLdb.connect(
+#			host=config['db_host'],
+#			user=config['db_user'],
+#			passwd=config['db_pass'],
+#			db=config['db_data']
+#		)
+
 		self.conn.autocommit(True)	
 		self.conn.set_character_set('utf8')
 
@@ -76,16 +85,16 @@ def users():
 		notifications = {'message': 'Failed to retrieve users', 'type': 'error'}
 		return render_template('users.html', message=message)
 
-	return render_template('users.html', users=users, message=message)
+	return render_template('users.html', users=users)
 
 
 @app.route('/users/edit/<user>')
-def editUser():
-	return "ToDo"
+def editUser(user='<user'):
+	return 'Se edita el usuario: ' + user
 
 
 @app.route('/users/delete/<user>')
-def deleteUser():
+def deleteUser(user='<user'):
 	global notifications
 
 	if 'username' not in session:
@@ -100,6 +109,8 @@ def deleteUser():
 	if not result:
 		notifications = {'message': 'User deleted successfully', 'type': 'success'}
 		return redirect(url_for('users', message="User deleted successfully"))
+
+	print result
 
 	notifications = {'message': 'Something went wrong: ' + result, 'type': 'error'}
 	return redirect(url_for('users', message="Something went wrong: " + result))	
@@ -123,7 +134,7 @@ def login():
 		if not result:
 			notifications = {'message': 'Logged in', 'type': 'success'}
 			g.user 		  = 'username'
-			return redirect(url_for('dashboard'))	
+			return redirect(url_for('proyectos'))	
 
 		else:
 			message = {'message': 'Failed to log in', 'type': 'error'}
@@ -187,6 +198,10 @@ def dashboard():
 def tareas():
 	return render_template('tareas.html')
 
+
+@app.route('/proyectos')
+def proyectos():
+	return render_template('proyectos.html')
 
 #REjecutando app
 if __name__ == "__main__":
