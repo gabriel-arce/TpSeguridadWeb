@@ -80,6 +80,23 @@ body {
   .jumbotron {
     border-bottom: 0;
   }
-}
 
+  .navbar { 
+    border-radius:0; 
+  }
+
+.modal {
+    display: block;
+}
+.modal-body:before,
+.modal-body:after {
+    display: table;
+    content: " ";
+}
+.modal-header:before,
+.modal-header:after {
+    display: table;
+    content: " ";
+}
+}
 

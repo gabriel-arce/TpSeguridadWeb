@@ -1,0 +1,27 @@
+<div>
+	<h4>Agregar Tareas</h4>
+
+	<form>
+		<div class="input-group">
+			<input type="text" name="" ng-model="tareasCtrl.descripcionTarea" class="form-control" placeholder="Descripcion de la tarea">
+
+			<div class="input-group-btn">
+				<button type="submit" class="btn btn-default" ng-click="tareasCtrl.agregarTarea()">
+					<span class="glyphicon glyphicon-plus"></span>
+				</button>
+			</div>
+			
+		</div>
+	</form>
+
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Descripcion</th>
+			</tr>
+		</thead>
+
+	</table>
+	
+</div>

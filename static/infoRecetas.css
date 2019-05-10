@@ -1,0 +1,14 @@
+.contenedorPrincipal {
+	width: 50%;
+	display: inline-block;
+	float: left;
+};
+
+.contenedorSecundario {
+	width: 50%;
+	display: inline-block;
+};
+
+
+
+

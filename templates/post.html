@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block body %}
+  <h2 class="text-center">{{ post.title }}</h2>
+  <div class="row">
+  	<div class="offset-sm-2 col-sm-8">
+  		<div class="body">{{ post.body | safe }}</div>
+  		<p class="author">Wwriten by {{ post.author_name }}</p>
+  	</div>
+  </div>
+
+{% endblock %}

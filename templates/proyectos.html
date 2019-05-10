@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+ 	<div class="row">
+ 		<div class="offset-sm-2 col-sm-8">
+ 			<h2>Proyectos Disponibles</h2>
+ 		</div>
+ 	</div>
+
+ 	<br>
+ 	<ul class="list-group">
+ 		<li class="list-group-header">
+ 			<label>Agregar nuevo proyecto</label>
+ 		</li>
+ 		<li class="list-group-item">
+			<form class="form-inline">
+ 				<div class="form-group">
+ 					<input type="text" class="form-control" placeholder="Nombre del proyecto" name="ProyectoNombre">
+ 				</div>
+ 				<div class="form-group">
+ 					<input type="text" class="form-control" placeholder="Empresa que contrata" name="ProyectoEmpresa">
+ 				</div>
+ 				<div class="form-group">
+ 					<input type="text" class="form-control" placeholder="Costo Total" name="ProyectoCosto">
+	 			</div>
+ 				<div class="form-group">
+ 					<input type="text" class="form-control" placeholder="E-mail de la Empresa" name="ProyectoEmail">
+ 				</div>
+ 				<button type="submit" class="btn btn-default">Invertir</button>
+ 			</form>
+ 		</li>
+
+ 		<br>
+		<div class="row">
+			<div class="offset-sm-2 col-sm-8">
+				<label>Sus proyectos actuales</label>
+				<ul class="edit">
+					{% for proyecto in proyectos%}
+					<li class="list-group-item">
+						<button class="btn btn-outline-danger delete">Eliminar</button>
+           				<button class="btn btn-outline-secundary">Edit</button>
+           				<i>{{ proyecto.ProyectoNombre}}</i> {{ proyecto.ProyectoEmpresa}} - USD {{ proyecto.ProyectoCosto}} {{ proyecto.ProyectoEmail}}
+       				</li>
+       				{% endfor %}
+   				</ul>
+   			</div>
+		</div>
+	</ul>
+
+{% endblock %} 
+
