@@ -14,14 +14,22 @@
 
 				{% for user in users %}
 				<div class="gaadiex-list">
-					<div class="gaadiex-list-item"><img class="gaadiex-list-item-img" src="./static/usuario.png" alt="List user">
-           				<div class="gaadiex-list-item-text">
-               				<h3>{{ user.user_username }}</h3>
-   	           				<p>IdUsuario: {{ user.user_name }}</p>
-               				<p><a href="#">E-mail: {{ user.user_email }}</a></p>
-               				<a href="/users/edit/{{ user.user_username }}"><button class="btn btn-info btn-xs">Edit</button></a> {% if user.name != 'admin' %}<a href="/users/delete/{{ user.user_name }}"><button class='btn btn-danger btn-xs'>Delete</button></a>{% endif %}
-           				</div>
-           			</div>
+					<div class="gaadiex-list-item"><img class="gaadiex-list-item-img" src="./static/usuario.png" alt="List user"></div>
+       				
+       				<div class="gaadiex-list-item-text">
+          				<h3>{{ user.user_username }}</h3>
+           				<p>IdUsuario: {{ user.user_name }}</p>
+           				<p><a href="#">E-mail: {{ user.user_email }}</a></p>
+    				</div>
+       				
+       				<div>
+       					<a href="/users/edit/{{ user.user_username }}"><button class="btn btn-outline-info">Edit</button></a> 
+       					{% if user.name != 'admin' %}
+       					<a href="/users/delete/{{ user.user_name }}"><button class='btn btn-outline-danger'>Delete</button></a>
+       					{% endif %}           				
+       				</div>
+       				<br>
+          			
            		{% endfor%}		
 				</div>  
 			</div>		                 			

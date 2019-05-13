@@ -6,7 +6,7 @@ import sys
 sys.path.append('./lib')
 
 import Users 		as Users
-#import Proyectos 	as Proyectos
+import Proyectos 	as Proyectos
 
 app = Flask(__name__)
 
@@ -194,15 +194,20 @@ def dashboard():
 	return render_template('dashboard.html')
 
 
-@app.route('/tareas')
-def tareas():
-	return render_template('tareas.html')
-
-
 @app.route('/proyectos')
 def proyectos():
-	return render_template('proyectos.html')
+	proyectos = Proyectos.getProyectos()
 
+	#proyectos = Proyectos.getProyectosPorUsuario('admin') 
+
+	#for proyecto in proyectos:
+	#	print proyecto.Nombre
+
+	return render_template('proyectos.html', proyectos=proyectos)
+
+
+
+	
 #REjecutando app
 if __name__ == "__main__":
 	app.run()

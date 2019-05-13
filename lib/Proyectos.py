@@ -1,39 +1,46 @@
 import json
 
-table = [[]]
 
-with open('proyectos.json') as file:
-	raw_data = file.read()
+class ServerError(Exception): pass 
 
-#	proyectos = raw_data['Proyectos']
+class Proyecto:
+	def __init__(self, Usuario, Nombre, Empresa, Costo, Email):
+		self.Usuario 	= Usuario
+		self.Nombre 	= Nombre
+		self.Empresa 	= Empresa
+		self.Costo 		= Costo
+		self.Email 		= Email
 
-#	for p in proyectos:
-#		print('Nombre: ' + p['ProyectoNombre'])
-#		print('')
+	def __str__(self):
+		return '{{"ProyectoUsuario" = "{0}", "ProyectoNombre" = "{1}", "ProyectoEmpresa" = "{2}", "ProyectoCosto" = "{3}", "ProyectoEmail" = "{4}"}}'.format(self.Usuario, self.Nombre, self.Empresa, self.Costo, self.Email)
+
+	def __getitem__(self, key):
+		return getattr(self, key)
+
+	def keys(self):
+		return ('items')
 
 
-#def dictList(d, column_name=''):
-#	for k, v in d.items():
-#		if isinstance(v, dict):
-#			dictList(v, column_name = k)
-#			continue
+def objCreator(d):
+	return Proyecto(d['ProyectoUsuario'], d['ProyectoNombre'] ,d['ProyectoEmpresa'], d['ProyectoCosto'], d['ProyectoEmail'])
 
-#		if column_name:
-#			column_name +='.'
+def getProyectos():
+	with open('./lib/proyectos.json', 'r') as file:
+		proyectos = json.load(file, object_hook = objCreator)
 
-#		column_name += k
-		#table[0].append(column_name)
-#		table[0].append(v)
+	return proyectos
 
-data_string = json.dumps(raw_data, indent=4)
-users_dict  = json.loads(data_string)
+def getProyectosPorUsuario(usuario):
 
-print users_dict
+	aux = {}
 
-#dictList(raw_data)
+	proyectos = getProyectos()
 
-#for row in table:
-#	print (row)
+	for proyecto in proyectos:
+		print proyecto['items']
+		#if proyecto['Usuario'] == usuario: 
+		#	aux.append(proyecto)
 
-proyecto = json.loads('{ "ProyectoNombre": "Actualizacion de logistica", "ProyectoEmpresa": "Edesur S.A.", "ProyectoCosto": 1500, "ProyectoEmail": "info@edesur.com.ar" }')
-print json.dumps(proyecto)
+	return aux
+
+
