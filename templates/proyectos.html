@@ -15,7 +15,7 @@
  		<label>Agregar nuevo proyecto</label>
  	</li>
  	<li class="list-group-item">
-		<form class="form-inline">
+		<form class="form-inline" action="/proyectos/agregar" method="POST">
 			<div class="form-group">
 				<input type="text" class="form-control" placeholder="Nombre del proyecto" name="ProyectoNombre">
 			</div>
@@ -40,7 +40,7 @@
 			<li class="list-group-item">
 				<button class="btn btn-outline-danger delete">Eliminar</button>
    				<button class="btn btn-outline-info">Edit</button>
-   				<i>{{ proyecto.Nombre }}</i> {{ proyecto.Empresa }} - USD {{ proyecto.Costo }} {{ proyecto.Email }}
+   				<i>{{ proyecto.ProyectoNombre }}</i> {{ proyecto.ProyectoEmpresa }} - USD {{ proyecto.ProyectoCosto }} - <a href="#"></a>{{ proyecto.ProyectosEmail }}
    			</li>
    		{% endfor %}
 </ul>

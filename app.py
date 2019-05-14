@@ -5,6 +5,7 @@ import MySQLdb
 import sys
 sys.path.append('./lib')
 
+import json
 import Users 		as Users
 import Proyectos 	as Proyectos
 
@@ -14,16 +15,15 @@ class DB:
 	conn = None
 
 	def connect(self):
-		self.conn = MySQLdb.connect("localhost","testuser","inicio123","bucketlist")
-#		config = {}
-#		execfile("config.conf",config)
+		config = {}
+		execfile("config.conf",config)
 		
-#		self.conn = MySQLdb.connect(
-#			host=config['db_host'],
-#			user=config['db_user'],
-#			passwd=config['db_pass'],
-#			db=config['db_data']
-#		)
+		self.conn = MySQLdb.connect(
+			host=config['db_host'],
+			user=config['db_user'],
+			passwd=config['db_pass'],
+			db=config['db_data']
+		)
 
 		self.conn.autocommit(True)	
 		self.conn.set_character_set('utf8')
@@ -41,6 +41,8 @@ class DB:
 
 
 if __name__ == "__main__":
+	config = {}
+	execfile("config.conf",config)	
 	db = DB()
 	notifications = None 
 	app.secret_key = 'SomeRandomStringHere'
@@ -196,21 +198,22 @@ def dashboard():
 
 @app.route('/proyectos')
 def proyectos():
-	proyectos = Proyectos.getProyectos()
-
-	#proyectos = Proyectos.getProyectosPorUsuario('admin') 
-
-	#for proyecto in proyectos:
-	#	print proyecto.Nombre
-
+	proyectos = Proyectos.getProyectosPorUsuario(session['username']) 
 	return render_template('proyectos.html', proyectos=proyectos)
 
 
+@app.route('/proyectos/agregar', methods=['POST'])
+def agregarProyecto():
+	return Proyectos.agregarProyecto(request.form, session['username'])
 
-	
+
 #REjecutando app
 if __name__ == "__main__":
-	app.run()
+	app.run(
+			host=config['server_ip'],
+			port=config['server_port'],
+			debug=config['debug']
+		)
 
 
 
