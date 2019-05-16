@@ -1,6 +1,11 @@
 import json
+import os.path
 
 JSON_FILE = './lib/proyectos.json'
+JSON_FILE_PREFIX = './lib/proyectos_'
+JSON_FILE_SUFIX  = '.json'
+
+proyectos = []
 
 
 class ServerError(Exception): pass 
@@ -22,55 +27,92 @@ class Proyecto:
 	def keys(self):
 		return ('items')
 
-	def toJSON(self):
-		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
+class ProyectoEncoder(json.JSONEncoder):
+	def default(self, obj):
+		return obj.__dict__
+
+
+class ProyectoDecoder(object):
+	def __init__(self, j):
+		self.__dict__ = json.loads(j)
 
 
 def objCreator(d):
 	return Proyecto(d['ProyectoUsuario'], d['ProyectoNombre'] ,d['ProyectoEmpresa'], d['ProyectoCosto'], d['ProyectoEmail'])
 
 
-def getProyectos():
+def getProyectos(Usuario):
+	fd = JSON_FILE_PREFIX + Usuario + JSON_FILE_SUFIX
+
 	with open(JSON_FILE, 'r') as file:
 		proyectos = json.load(file, object_hook = objCreator)
-
-	return proyectos
+		return proyectos
 
 
 def getProyectosPorUsuario(Usuario):
 
 	result 		= []
-	proyectos 	= getProyectos()
+	proyectos 	= getProyectos(Usuario)
 
-	for proyecto in proyectos:
-		if proyecto.ProyectoUsuario == Usuario:
-			result.append(proyecto)
+	if proyectos:
+		for proyecto in proyectos:
+
+			#Deserializar el proyecto
+			#p = json.dumps(proyecto, cls=ProyectoEncoder, indent=4)
+
+			#Deserializar el proyecto
+			#p = ProyectoDecoder(proyecto)
+
+			#Solo los proyectos del usuario
+			if proyecto.ProyectoUsuario == Usuario:
+				result.append(proyecto)
+
+		return result
 
 	return result
-
-
+	
 def agregarProyecto(Form, Usuario):
+	aux = []
+
 	ProyectoUsuario 	= Usuario
 	ProyectoNombre 		= Form['ProyectoNombre']
 	ProyectoEmpresa 	= Form['ProyectoEmpresa']
 	ProyectoCosto 		= Form['ProyectoCosto']
 	ProyectoEmail 		= Form['ProyectoEmail']
 
+	#Crear instancia
 	proyecto 	= Proyecto(ProyectoUsuario, ProyectoNombre, ProyectoEmpresa, ProyectoCosto, ProyectoEmail)
-	s  			= json.dumps(proyecto.__dict__)
 
-	print s
-	proyectos 	= getProyectos()
+	#Buscar los proyectos del usuario y agregar el nuevo proyecto
+	#proyectos = getProyectosPorUsuario(Usuario) 
+	proyectos = getProyectos(Usuario)
 
-	#inicializa
-	#oldData = json.loads(open(JSON_FILE, 'r').read())
-
-	proyectos.append(proyecto)
 	print proyectos
 
-	with open(JSON_FILE, 'w') as updateFile:
-		json.dump(proyectos, updateFile)
-		
-	return 'creado'
+	proyectos.append(proyecto)
+
+	#Actualizar JSON de proyectos
+	for proy in proyectos:
+
+		#Deserializar el proyecto
+		#p = ProyectoDecoder(proy)
+
+		#Solo los proyectos del usuario
+		#if p.ProyectoUsuario == Usuario:
+			serialize = json.dumps(proy, cls=ProyectoEncoder, indent=4)
+			aux.append(serialize)
+			print serialize
+
+		#else:
+		#	aux.append(proy)
+		#	print proy 	
+
+	fd = JSON_FILE_PREFIX + Usuario + JSON_FILE_SUFIX
+
+	with open(JSON_FILE, 'w') as file:
+		json.dump(aux, file)
+
+	return proyectos
 
 

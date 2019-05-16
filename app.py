@@ -189,14 +189,14 @@ def dashboard():
 
 @app.route('/proyectos')
 def proyectos():
-	proyectos = Proyectos.getProyectosPorUsuario(session['username']) 
-	return render_template('proyectos.html', proyectos=proyectos)
+	#proyectos = Proyectos.getProyectosPorUsuario(session['username']) 
+	return render_template('proyectos.html', proyectos=Proyectos.getProyectosPorUsuario(session['username']))
 
 
 @app.route('/proyectos/agregar', methods=['POST'])
 def agregarProyecto():
-	return Proyectos.agregarProyecto(request.form, session['username'])
-
+	
+	return render_template('proyectos.html', proyectos=Proyectos.agregarProyecto(request.form, session['username']))
 
 #REjecutando app
 if __name__ == "__main__":

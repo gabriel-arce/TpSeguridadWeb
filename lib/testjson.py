@@ -1,7 +1,7 @@
 import json
 
-JSON_FILE = '../lib/proyectos.json'
-JSON_FILE2 = '../lib/proyectos5.json'
+JSON_FILE = '../lib/proyectos3.json'
+JSON_FILE2 = '../lib/proyectos.json'
 
 class Proyecto:
 	def __init__(self, Usuario, Nombre, Empresa, Costo, Email):
@@ -26,7 +26,7 @@ def objCreator(d):
 	return Proyecto(d['ProyectoUsuario'], d['ProyectoNombre'] ,d['ProyectoEmpresa'], d['ProyectoCosto'], d['ProyectoEmail'])
 
 
-with open(JSON_FILE2, 'r') as file:
+with open(JSON_FILE, 'r') as file:
 	proyectos = json.load(file, object_hook = objCreator)
 
 
@@ -36,17 +36,22 @@ with open(JSON_FILE2, 'r') as file:
 #proyectos.append(proyecto)
 
 print proyectos
-print proyectos[4]
+proyecto = json.dumps(proyectos[4], cls=ProyectoEncoder, indent=2)
+print proyecto 
+#print proyectos[4]
 
 #print proyecto
 #print type(proyecto)
 #print proyecto['ProyectoUsuario']
 
-#aux = []
-#for proy in proyectos:
-#	serialize = json.dumps(proy, cls=ProyectoEncoder, indent=4)
+#aux  = []
+#aux2 = None
+
+for proy in proyectos:
+
+	serialize = json.dumps(proy, cls=ProyectoEncoder, indent=2)
 #	aux.append(serialize)
-#	print serialize
+#	print serialize[0]
 
 #print aux
 #with open(JSON_FILE2, 'w') as file2:
