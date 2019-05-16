@@ -1,10 +1,10 @@
-pip install Flask
-pip install Flask-SQLAlchemy
-pip install Flask-oidc
-pip install python-slugify
-pip install escape
-pip install request
-pip install jsonify
+Flask
+Flask-SQLAlchemy
+Flask-oidc
+python-slugify
+escape
+request
+jsonify
 
 
 

@@ -59,6 +59,7 @@ def agregarProyecto(Form, Usuario):
 	proyecto 	= Proyecto(ProyectoUsuario, ProyectoNombre, ProyectoEmpresa, ProyectoCosto, ProyectoEmail)
 	s  			= json.dumps(proyecto.__dict__)
 
+	print s
 	proyectos 	= getProyectos()
 
 	#inicializa

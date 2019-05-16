@@ -46,7 +46,6 @@ if __name__ == "__main__":
 	db = DB()
 	notifications = None 
 	app.secret_key = 'SomeRandomStringHere'
-	#app.run()
 
 
 #Definiendo rutas posibles
@@ -59,11 +58,6 @@ def index():
 		message 		= notifications
 		notifications 	= None
 
-	if 'username' not in session:
-		message = {'message': 'Please log in', 'type': 'warning'}
-		return redirect(url_for('login'))
-
-	#return render_template('index.html', session=session, message=message)
 	return render_template('index.html', session=session)
 
 @app.route('/users')
@@ -158,7 +152,7 @@ def logout():
 	return redirect(url_for('login'))	
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
 	message = None
 	global notifications
@@ -168,27 +162,24 @@ def register():
 		notifications 	= None
 
 	if request.method == 'POST':
-		result = Users.registerUser(db, request.form)
+		result = Users.registerUser(db, request.form, config['pw_rounds'])
 		if not result:
 			notifications = {'message': 'Registration successful', 'type': 'success'}
-			if session['username'] == 'admin':
-				return redirect(url_for('register'))
 
-			else:	
-				return redirect(url_for('login'))
+			#if session['username'] == 'admin':
+			#	return redirect(url_for('register'))
+
+			#else:	
+			return redirect(url_for('login'))
 
 		else:
 			notifications = {'message': 'Something went wrong: ' + result, 'type': 'error'}
 			return render_template('register', message=message)
 
-	if 'username' in session and session['username'] == 'admin':
-		return render_template('register', message=message)
+	#if session['username'] == 'admin':
+	#	return render_template('register.html')
 
-	if 'username' in session:
-		return redirect(url_for('index'))
-					
-	else:
-		return redirect(url_for('login'))
+	return render_template('register.html')
 
 
 @app.route('/dashboard')

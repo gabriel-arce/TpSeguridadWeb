@@ -3,8 +3,6 @@ from flask 	import Flask, render_template, session, redirect, url_for, escape, r
 import bcrypt
 import MySQLdb
 
-ROUNDS = 10
-
 USER_ID 		= 0
 USER_NAME 		= 1
 USER_USERNAME   = 2
@@ -17,7 +15,7 @@ def loginForm(db, form):
 	error = None
 
 	try:
-		usename 	= form['username'] 
+		username 	= form['username'] 
 		cursor		= db.query("SELECT COUNT(*) FROM tbl_users WHERE user_name = %s", [form['username'] ])
 
 		if not cursor.fetchone()[0]:
@@ -39,24 +37,27 @@ def loginForm(db, form):
 		return error
 
 
-def registerUser(db, form):
+def registerUser(db, form, pounds):
 	error = None
 
 	try:
 		username 	= form['username']
+		userid 		= form['userid']
 		password 	= form['password']
 		email		= form['email']
 
 		if not username or not password or not email:
 			raise ServerError('Fill in all fields')
 
-		password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(ROUNDS))
+		#password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(pounds))
 
 		cursor 	= db.query("SELECT COUNT(1) FROM tbl_users WHERE user_name = %s", [username])
 		data	= cursor.fetchone()
 
 		if data[0] == 0:
-			cursor	= db.query("INSERT INTO tbl_users ('user_name', 'user_password', 'user_email') VALUES (%s, %s, %s)", [username, password, email])
+			query 	= "INSERT INTO `tbl_users`(`user_name`, `user_username`, `user_password`, `user_email`) VALUES (%s, %s, %s, %s)"
+			args	= [userid, username, password, email]
+			cursor	= db.query(query, args)
 			return None
 
 		else:
@@ -76,6 +77,9 @@ def getUsers(db):
 		cursor 	= db.query("SELECT user_name, user_username, user_email FROM tbl_users")
 
 		for row in cursor.fetchall():
+			if row[0] == 'admin':
+				continue
+				
 			userlist.append({'user_name': row[0], 'user_username': row[1], 'user_email': row[2]})
 
 		return userlist

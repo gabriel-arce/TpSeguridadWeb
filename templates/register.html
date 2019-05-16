@@ -4,30 +4,29 @@
 
 {% block body %}
 <section class="content">
-	<div class="container" style="margin-top: 50px">
-		<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-				<form action="" method="POST" >
-					<div class="input-group">
-						<span class="input-group-addon" id="basic-user" style="width:100px;">Username</span>
-						<input type="text" class="form-control" name="username" id="user" aria-describedby="basic-user">
-					</div>
-					<br>
-					<div class="input-group">
-						<span class="input-group-addon" id="basic-password" style="width:100px;">Password</span>
-						<input type="password" class="form-control" name="password" id="pass" aria-describedby="basic-password">
-					</div>
-					<br>
-					<div class="input-group">
-						<span class="input-group-addon" id="basic-email" style="width:100px;">E-Mail</span>
-						<input type="text" class="form-control" name="email" id="email" aria-describedby="basic-email">
-					</div>
-					<br>					
-					<input type="submit" value="Register" class="btn btn-default btn-sm">
-					
-				</form>	
-			</div>
-		</div>
-	</div>	
+	<div class="col-md-6 login-form-1">
+		<h3>Register</h3>
+			<form action="" method="POST"> 
+    			<div class="form-group">
+      				<input type="text" class="form-control" placeholder="Nombre *" name="username" required autofocus/>
+    			</div>    			
+
+    			<div class="form-group">
+      				<input type="text" class="form-control" placeholder="ID Usuario *" name="userid" required />
+    			</div>
+
+    			<div class="form-group">
+      				<input type="password" class="form-control" placeholder="Password *" name="password" required />
+    			</div>
+ 
+    			<div class="form-group">
+      				<input type="text" class="form-control" placeholder="E-mail" name="email" required />
+    			</div>
+
+    			<div class="form-group" style="margin-top: 40px">
+      				<input type="submit" class="btnSubmit" value="Registrar" />
+      			</div>
+      		</form>   
+	</div>
 </section>
 {% endblock %}
