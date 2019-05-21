@@ -1,14 +1,13 @@
 from flask import Flask, g
 
-#@app.before_request
-#def before_request():
-#    """
-#    Load a user object into `g.user` before each request.
-#    """
-#    if auth.oidc.user_loggedin:
-#        g.user = auth.okta_client.get_user(auth.oidc.user_getfield("sub"))
-#    else:
-#        g.user = None
+
+import sys
+sys.path.append('./lib')
+
+import lib
+import MySQLdb
+import json
+
 
 app = Flask(__name__)
 
@@ -20,6 +19,17 @@ app.register_blueprint(app.bp)
 __author__      = "Gabriel Arce (arce.gerardogabriel@gmail.com"
 __copyright__   = "Copyright (C) 2019 Gabriel Arce"
 __license__     = "GPL 3.0"
+
+#Carpetas
+
+
+#Inicializacion
+#config = {}
+#execfile("config.conf",config)	
+#db = DB()
+#notifications = None 
+#app.secret_key = 'SomeRandomStringHere'
+
 
 @app.errorhandler(404)
 def page_not_found(e):

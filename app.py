@@ -1,85 +1,38 @@
 from flask import Flask, render_template, session, redirect, url_for, escape, request, g
 
-import MySQLdb
+#Propios
+from lib.Users  	import getUsers, deleteUser, loginForm, registerUser
+from lib.Proyectos 	import getProyectosPorUsuario, agregarNuevoProyecto, borrarProyectoPorIndice, editarProyecto
+from lib.DB 		import DB 
+from lib.config		import *
 
-import sys
-sys.path.append('./lib')
-
-import json
-import Users 		as Users
-import Proyectos 	as Proyectos
 
 app = Flask(__name__)
-
-class DB:
-	conn = None
-
-	def connect(self):
-		config = {}
-		execfile("config.conf",config)
-		
-		self.conn = MySQLdb.connect(
-			host=config['db_host'],
-			user=config['db_user'],
-			passwd=config['db_pass'],
-			db=config['db_data']
-		)
-
-		self.conn.autocommit(True)	
-		self.conn.set_character_set('utf8')
-
-	def query(self, sql, args=None):
-		try:
-			cursor = self.conn.cursor()
-			cursor.execute(sql, args)
-		except (AttributeError, MySQLdb.OperationalError):
-			self.connect()
-			cursor = self.conn.cursor()
-			cursor.execute(sql, args)
-
-		return cursor
-
 
 if __name__ == "__main__":
 	config = {}
 	execfile("config.conf",config)	
 	db = DB()
-	notifications = None 
 	app.secret_key = 'SomeRandomStringHere'
+
 
 
 #Definiendo rutas posibles
 @app.route('/')
 def index():
-	messages = None
-	global notifications
-
-	if notifications:
-		message 		= notifications
-		notifications 	= None
-
 	return render_template('index.html', session=session)
 
 @app.route('/users')
 def users():
-	messages = None
-	global notifications
-
-	if notifications:
-		message 		= notifications
-		notifications 	= None
-
 	if 'username' not in session:
-		message = {'message': 'Please log in', 'type': 'warning'}
-		return redirect(url_for('login'))
+		return redirect(url_for('login'), message='Please log in')
 
 	if session['username'] != 'admin':
 		return redirect(url_for('index', message='Admin only page'))
 
-	users = Users.getUsers(db)
+	users = getUsers(db)
 	if not users:
-		notifications = {'message': 'Failed to retrieve users', 'type': 'error'}
-		return render_template('users.html', message=message)
+		return render_template('users.html', message='Failed to retrieve users')
 
 	return render_template('users.html', users=users)
 
@@ -91,93 +44,62 @@ def editUser(user='<user'):
 
 @app.route('/users/delete/<user>')
 def deleteUser(user='<user'):
-	global notifications
-
 	if 'username' not in session:
-		notifications = {'message': 'Please log in', 'type': 'warning'}
-		return redirect(url_for('login'))
+		return redirect(url_for('login'), message='Please log in')
 
 	if session['username'] != 'admin':
-		notifications = {'message': 'Admin only page', 'type': 'error'}
-		return redirect(url_for('index'))
+		return redirect(url_for('index'), message='Admin only page')
 
-	result = Users.deleteUser(db,user)
+	result = deleteUser(db,user)
 	if not result:
-		notifications = {'message': 'User deleted successfully', 'type': 'success'}
 		return redirect(url_for('users', message="User deleted successfully"))
 
-	print result
-
-	notifications = {'message': 'Something went wrong: ' + result, 'type': 'error'}
 	return redirect(url_for('users', message="Something went wrong: " + result))	
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-	message = None
-	global notifications
 
-	if notifications:
-		message 		= notifications
-		notifications 	= None
+	proyectos = []
 
 	if 'username' in session:
 		return redirect(url_for('index'))
 
 	if request.method == 'POST':
-		result = Users.loginForm(db, request.form)
+		result = loginForm(db, request.form)
 
 		if not result:
-			notifications = {'message': 'Logged in', 'type': 'success'}
-			g.user 		  = 'username'
+			proyectos = getProyectosPorUsuario(request.form['username'])
+			print proyectos
+
 			return redirect(url_for('proyectos'))	
 
 		else:
-			message = {'message': 'Failed to log in', 'type': 'error'}
-			return redirect(url_for('login', message=message))	
+			return redirect(url_for('login'))	
 
 
-	return render_template('login.html', message=message)	
+	return render_template('login.html')	
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
-	global notifications
-
 	if 'username' not in session:
 		return redirect(url_for('login'))
 
 	session.pop('username', None)
-	notifications = {'message': 'Logged out', 'type': 'success'}
-	return redirect(url_for('login'))	
+
+	return redirect(url_for('login'), 'Logged out')	
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-	message = None
-	global notifications
-
-	if notifications:
-		message 		= notifications
-		notifications 	= None
-
 	if request.method == 'POST':
-		result = Users.registerUser(db, request.form, config['pw_rounds'])
+		result = registerUser(db, request.form, config['pw_rounds'])
 		if not result:
-			notifications = {'message': 'Registration successful', 'type': 'success'}
-
-			#if session['username'] == 'admin':
-			#	return redirect(url_for('register'))
-
-			#else:	
 			return redirect(url_for('login'))
 
 		else:
-			notifications = {'message': 'Something went wrong: ' + result, 'type': 'error'}
-			return render_template('register', message=message)
-
-	#if session['username'] == 'admin':
-	#	return render_template('register.html')
+			return render_template('register', message='Something went wrong')
 
 	return render_template('register.html')
 
@@ -187,16 +109,36 @@ def dashboard():
 	return render_template('dashboard.html')
 
 
-@app.route('/proyectos')
+@app.route('/proyectos', methods=['GET', 'POST'])
 def proyectos():
-	#proyectos = Proyectos.getProyectosPorUsuario(session['username']) 
-	return render_template('proyectos.html', proyectos=Proyectos.getProyectosPorUsuario(session['username']))
+
+	if 'Eliminar' in request.form:
+		return render_template('proyectos.html', proyectos=borrarProyectoPorIndice(request.form))
+
+	#elif 'Back' in request.form:
+	#	return render_template('proyectos.html', proyectos=getProyectosPorUsuario(session['username']))
+
+	elif 'Editar' in request.form:
+	#	if request.method == 'GET':
+		indice 		=  int(request.form['Editar'][0]) - 1
+		proyecto 	= getProyectosPorUsuario(session['username'])[indice]
+		return render_template('editarProyecto.html', proyecto=proyecto)
+
+		#if request.method == 'POST':
+		#	return render_template('proyectos.html', proyectos=editarProyecto(request.form, session['username']))
+
+	elif 'Actualizar' in request.form:
+		print 'paso'
+		return render_template('proyectos.html', proyectos=getProyectosPorUsuario(session['username']))
 
 
-@app.route('/proyectos/agregar', methods=['POST'])
+	return render_template('proyectos.html', proyectos=getProyectosPorUsuario(session['username']))
+
+
+@app.route('/proyectos/agregar', methods=['GET', 'POST'])
 def agregarProyecto():
-	
-	return render_template('proyectos.html', proyectos=Proyectos.agregarProyecto(request.form, session['username']))
+	return render_template('proyectos.html', proyectos=agregarNuevoProyecto(request.form, session['username']))
+
 
 #REjecutando app
 if __name__ == "__main__":
@@ -205,12 +147,3 @@ if __name__ == "__main__":
 			port=config['server_port'],
 			debug=config['debug']
 		)
-
-
-
-
-
-
-
-
-

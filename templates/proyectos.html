@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Proyectos{% endblock %}
 
 {% block body %}
  <div class="row">
@@ -35,14 +35,18 @@
 	<br>
 	<li class="list-group-header">
 		<label>Sus proyectos actuales</label>
-	</li class="list-group-item"> 
-		{% for proyecto in proyectos%}
+	</li class="list-group-header">
+	
+		<form action="proyectos" method="POST">  
+			{% for proyecto in proyectos %}
 			<li class="list-group-item">
-				<button class="btn btn-outline-danger delete">Eliminar</button>
-   				<button class="btn btn-outline-info">Edit</button>
-   				<i>{{ proyecto.ProyectoNombre }}</i> {{ proyecto.ProyectoEmpresa }} - USD {{ proyecto.ProyectoCosto }} - <a href="#"></a>{{ proyecto.ProyectosEmail }}
+				<button class="btn btn-outline-danger delete" name="Eliminar" value="{{ loop.index }}">Eliminar</button>
+   				<button class="btn btn-outline-info" name="Editar" value="{{ loop.index }}">Modificar</button>
+   				<i><b>{{ proyecto.ProyectoNombre }}</b></i> {{ proyecto.ProyectoEmpresa }} - USD {{ proyecto.ProyectoCosto }} - <a href="#"></a>{{ proyecto.ProyectosEmail }}
+   				
    			</li>
-   		{% endfor %}
+   			{% endfor %}
+   		</form>
 </ul>
 
 {% endblock %} 

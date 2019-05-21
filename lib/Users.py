@@ -1,7 +1,11 @@
-from flask 	import Flask, render_template, session, redirect, url_for, escape, request
+from flask 	import Flask, render_template, session, redirect, url_for, escape, request, g
 
-import bcrypt
+#import bcrypt
 import MySQLdb
+
+from lib.Proyectos 	import getProyectosPorUsuario
+from lib.config 	import *
+
 
 USER_ID 		= 0
 USER_NAME 		= 1
@@ -10,6 +14,8 @@ USER_PASSWORD	= 3
 USER_EMAIL		= 4
 
 class ServerError(Exception): pass 
+
+
 
 def loginForm(db, form):
 	error = None
@@ -27,7 +33,9 @@ def loginForm(db, form):
 		for row in cursor.fetchall():
 			#if bcrypt.hashpw(form['password'].encode('utf-8'), row[0]) == row[0]:
 			if form['password'] == row[USER_PASSWORD]:
-				session['username'] = form['username']
+				session['username'] 	= form['username']
+				proyectos 				= getProyectosPorUsuario(form['username'])
+
 				return error
 
 		raise ServerError('Incorrect username / password')
