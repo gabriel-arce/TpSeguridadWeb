@@ -1,8 +1,6 @@
 from flask import Flask, render_template, session, redirect, url_for, escape, request, g, render_template_string
+from urlparse import urlparse
 import jinja2
-import jinja2._compat
-import jinja2.utils
-
 # Propios
 
 
@@ -16,9 +14,10 @@ if __name__ == "__main__":
 
 
 # Definiendo rutas posibles
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('index.html', session=session)
+    username = request.values.get('username')
+    return render_template_string('Hello ' + username)
 
 
 @app.route('/users')
@@ -129,7 +128,7 @@ def page_not_found(e):
 {%  block body  %}
     <div class="center-content error">
         <h1>Oops! That page doesn't exist.</h1>
-        <h3>{{ ''.class.mro()[1].subclasses() |safe }}</h3>
+        <h3>{{request.url}}</h3>
     </div>
 {%  endblock  %}
 '''

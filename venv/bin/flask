@@ -1,5 +1,4 @@
-#!/home/depafranco/Desktop/proyectos/TpSeguridadWeb/venv/bin/python3
-
+#!/home/depaolifranco/Desktop/projects/TpSeguridadWeb/venv/bin/python2
 # -*- coding: utf-8 -*-
 import re
 import sys
