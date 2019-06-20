@@ -16,16 +16,16 @@ if __name__ == "__main__":
 	app.secret_key = 'SomeRandomStringHere'
 
 
-
 #Definiendo rutas posibles
 @app.route('/')
 def index():
-	return render_template('index.html', session=session)
+	username = request.values.get('username')
+	print username
+	return render_template('index.html', session=session, username=username)
 
-@app.route('/<username>')
+@app.route('/?<username>', methods=['POST', 'GET'])
 def render():
-	print 'Paso username'
-	return render_template('index.html')
+	return render_template_string('index.html', username=username)
 
 @app.route('/users')
 def users():
@@ -78,7 +78,6 @@ def login():
 		if not result:
 			proyectos = getProyectosPorUsuario(request.form['username'])
 			print proyectos
-			print username
 
 			return redirect(url_for('index', username=username))
 			#return render_template('index.html', username=username)
@@ -87,8 +86,6 @@ def login():
 			return redirect(url_for('login'))	
 			
 	return render_template('login.html')	
-
-
 
 
 @app.route('/logout', methods=['GET', 'POST'])
