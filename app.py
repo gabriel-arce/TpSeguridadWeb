@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for, escape, request, g
+from flask import Flask, render_template, session, redirect, url_for, escape, request, g, render_template_string
 
 #Propios
 from lib.Users  	import getUsers, deleteUser, loginForm, registerUser
@@ -21,6 +21,11 @@ if __name__ == "__main__":
 @app.route('/')
 def index():
 	return render_template('index.html', session=session)
+
+@app.route('/<username>')
+def render():
+	print 'Paso username'
+	return render_template('index.html')
 
 @app.route('/users')
 def users():
@@ -59,11 +64,13 @@ def deleteUser(user='<user'):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
 	proyectos = []
 
+	username = str(request.values.get('username'))
+	#return render_template_string('Hello' + username)
+
 	if 'username' in session:
-		return redirect(url_for('index'))
+		return redirect(url_for('index'), message='Test4')
 
 	if request.method == 'POST':
 		result = loginForm(db, request.form)
@@ -71,14 +78,17 @@ def login():
 		if not result:
 			proyectos = getProyectosPorUsuario(request.form['username'])
 			print proyectos
+			print username
 
-			return redirect(url_for('proyectos'))	
+			return redirect(url_for('index', username=username))
+			#return render_template('index.html', username=username)
 
 		else:
 			return redirect(url_for('login'))	
-
-
+			
 	return render_template('login.html')	
+
+
 
 
 @app.route('/logout', methods=['GET', 'POST'])
