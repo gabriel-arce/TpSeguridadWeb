@@ -6,8 +6,10 @@ from lib.Proyectos 	import getProyectosPorUsuario, agregarNuevoProyecto, borrarP
 from lib.DB 		import DB 
 from lib.config		import *
 
+from jinja2 import Environment
 
 app = Flask(__name__)
+Jinja2 = Environment()
 
 if __name__ == "__main__":
 	config = {}
@@ -20,12 +22,13 @@ if __name__ == "__main__":
 @app.route('/')
 def index():
 	username = request.values.get('username')
-	print username
+	
 	return render_template('index.html', session=session, username=username)
+	#return Jinja2.from_string('Hola' + str(username)).render()
 
-@app.route('/?<username>', methods=['POST', 'GET'])
-def render():
-	return render_template_string('index.html', username=username)
+#@app.route('/?<username>', methods=['POST', 'GET'])
+#def render():
+#	return render_template_string('index.html', username=username)
 
 @app.route('/users')
 def users():
@@ -70,7 +73,7 @@ def login():
 	#return render_template_string('Hello' + username)
 
 	if 'username' in session:
-		return redirect(url_for('index'), message='Test4')
+		return redirect(url_for('index'))
 
 	if request.method == 'POST':
 		result = loginForm(db, request.form)
@@ -145,6 +148,50 @@ def proyectos():
 @app.route('/proyectos/agregar', methods=['GET', 'POST'])
 def agregarProyecto():
 	return render_template('proyectos.html', proyectos=agregarNuevoProyecto(request.form, session['username']))
+
+
+@app.route('/<path:page>')
+def custom_page(page):
+  if page == 'favicon.ico': return ''
+
+  try:
+    template = open(page).read()
+
+  except Exception as e:
+    #template = render_template("404.html", urlErronea=str(e))
+    template = str(e)
+
+  #template += "\n<!-- page: %s, src: %s -->\n" % (page, __file__)
+
+  return render_template_string(template, name='test')
+
+
+
+#Manejo de Errores
+@app.errorhandler(404)
+def page_not_found(e):
+    """Render a 404 page."""
+
+    #return render_template("404.html", urlErronea=(request.url)), 404
+    template = '''{ extends "layout.html" }
+
+	{ block title }Page Not Found{ endblock }
+	{ block body }
+  	<h1 class="text-center">Page Not Found</h1>
+  	<p class="text-center">Whatever you did, it's not working :( </p>
+  	<br>
+  	<p class="text-center">%s</p>
+	{ endblock } ''' % (request.url)
+
+    print template
+
+    return render_template_string(template), 404
+
+
+@app.errorhandler(403)
+def insufficient_permissions(e):
+    """Render a 403 page."""
+    return render_template("403.html"), 403
 
 
 #REjecutando app

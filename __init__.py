@@ -30,14 +30,3 @@ __license__     = "GPL 3.0"
 #notifications = None 
 #app.secret_key = 'SomeRandomStringHere'
 
-
-@app.errorhandler(404)
-def page_not_found(e):
-    """Render a 404 page."""
-    return render_template("404.html"), 404
-
-
-@app.errorhandler(403)
-def insufficient_permissions(e):
-    """Render a 403 page."""
-    return render_template("403.html"), 403
